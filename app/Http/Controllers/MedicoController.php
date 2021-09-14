@@ -14,7 +14,8 @@ class MedicoController extends Controller
      */
     public function index()
     {
-        return Medico::all();
+        $medicos = Medico::all();
+        return view('medicos.index', ["medicos" => $medicos]);
     }
 
     /**
@@ -24,7 +25,7 @@ class MedicoController extends Controller
      */
     public function create()
     {
-        //
+        return view('medicos.create');
     }
 
     /**
@@ -35,7 +36,13 @@ class MedicoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $medico = new Medico();
+        $medico->name = $input['name'];
+        $medico->address = $input['address'];
+        $medico->phone = $input['phone'];
+        $medico->save();
+        return redirect((route('medicos.index')));
     }
 
     /**
@@ -46,7 +53,7 @@ class MedicoController extends Controller
      */
     public function show(Medico $medico)
     {
-        return $medico;
+        return view('medicos.show', ['medico' => $medico]);
     }
 
     /**

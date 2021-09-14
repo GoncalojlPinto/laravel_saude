@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Medico;
+use App\Http\Controllers\MedicoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +22,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-require __DIR__.'/auth.php';
 
-Route::resource('medico', Medico::class);
+Route::resource('medicos', MedicoController::class);
+
+require __DIR__.'/auth.php';
