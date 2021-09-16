@@ -64,7 +64,7 @@ class MedicoController extends Controller
      */
     public function edit(Medico $medico)
     {
-        //
+        return view('medicos.edit', ['medico' => $medico]);
     }
 
     /**
@@ -87,6 +87,7 @@ class MedicoController extends Controller
      */
     public function destroy(Medico $medico)
     {
-        //
+        Medico::destroy($medico->id);
+        return redirect()->route('medicos.index')->with("message", "Medico ". $medico->name. " Eleminado com sucesso");
     }
 }

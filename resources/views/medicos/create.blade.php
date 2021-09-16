@@ -29,8 +29,8 @@
 
     <div class="form-group row">
         <div class="col-md-6">
-            <button type="submit" class="btn btn-primary">
-                {{ __("Adicionar") }}
+            <button type="submit" class="btn btn-primary" {{ redirect((route('medicos.index'))) }}>
+                {{ __("Adicionar")  }}
             </button>
         </div>
     </div>
