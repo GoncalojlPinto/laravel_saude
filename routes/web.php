@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\MedicoController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SpecialtyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +25,11 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 
+Route::get('medicos/download', [MedicoController::class, 'download']);
 Route::resource('medicos', MedicoController::class);
+
+
+Route::resource('specialties', SpecialtyController::class);
+Route::resource('services', ServiceController::class);
 
 require __DIR__.'/auth.php';

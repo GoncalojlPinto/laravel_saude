@@ -19,32 +19,26 @@
         </div>
     @endif
 
-    <a class="btn btn-info" href="{{ route('medicos.create') }}" title="{{ __('Novo médico')}}"> {{ __('Novo médico')}} </a>
+    <a class="btn btn-info" href="{{ route('services.create') }}" title="{{ __('Novo Serviço')}}"> {{ __('Novo Serviço')}} </a>
 
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
+                <td>{{ __('Id') }}</td>
                 <td>{{ __('Nome') }}</td>
-                <td>{{ __('Morada') }}</td>
-                <td>{{ __('Telefone') }}</td>
-                <td>{{ __('Especialidade') }}</td>
-                <td>{{ __('Serviço') }}</td>
                 <td>{{ __('Acções') }}</td>
             </tr>
         </thead>
         <tbody>
-            @foreach ($medicos as $medico)
+            @foreach ($services as $service)
                 <tr>
-                    <td>{{ $medico->name }}</td>
-                    <td>{{ $medico->address }}</td>
-                    <td>{{ $medico->phone }}</td>
-                    <td>{{ $medico->specialty->name ?? ''}}</td>
-                    <td>{{ $medico->service->name ?? ''}}</td>
+                    <td>{{ $service->id }}</td>
+                    <td>{{ $service->name }}</td>
                     <td>
                         <div class="d-flex align-items-center justify-content-around">
-                            <a class="btn btn-small btn-success" href="{{ route('medicos.show', $medico->id) }}"><i class="fa fa-eye"></i></a>
-                            <a class="btn btn-small btn-info" href="{{ route('medicos.edit', $medico->id) }}"><i class="fa fa-edit"></i></a>
-                            <form action="{{ route('medicos.destroy', $medico->id) }}" method="POST">
+                            <a class="btn btn-small btn-success" href="{{ route('services.show', $service->id) }}"><i class="fa fa-eye"></i></a>
+                            <a class="btn btn-small btn-info" href="{{ route('services.edit', $service->id) }}"><i class="fa fa-edit"></i></a>
+                            <form action="{{ route('services.destroy', $service->id) }}" method="POST">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-small btn-danger"><i class="fa fa-times"></i></button>
                             </form>

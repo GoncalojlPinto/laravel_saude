@@ -3,10 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Medico;
+use App\Models\Service;
+use App\Models\Specialty;
+use App\Services\DownloadService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\MessageBag;
 
 class MedicoController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,8 +26,7 @@ class MedicoController extends Controller
      */
     public function index()
     {
-        $medicos = Medico::all();
-        return view('medicos.index', ["medicos" => $medicos]);
+        return view('medicos.index', ["medicos" => Medico::all()]);
     }
 
     /**
@@ -25,7 +36,7 @@ class MedicoController extends Controller
      */
     public function create()
     {
-        return view('medicos.create');
+        return view('medicos.create', ["specialities" => Specialty::all(), "services" => Service::all()]);
     }
 
     /**
@@ -37,12 +48,24 @@ class MedicoController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-        $medico = new Medico();
-        $medico->name = $input['name'];
-        $medico->address = $input['address'];
-        $medico->phone = $input['phone'];
-        $medico->save();
-        return redirect((route('medicos.index')));
+
+        $input['photo_perfil'] = $this->validateAndStoreFile($request);
+
+        $validator = Medico::validateData($input);
+
+        if($validator->fails()){
+            return redirect()->route('medicos.create')->withErrors($validator->errors());
+        }
+
+        $medico = $this->fillMedico(new Medico(), $input);
+
+        try{
+            $medico->save();
+        }catch(QueryException $e){
+            return redirect()->route('medicos.index')->withErrors(new MessageBag(["erro", "Erro ao tentar gravar o médico"]));
+        }
+
+        return redirect(route('medicos.index'));
     }
 
     /**
@@ -64,7 +87,7 @@ class MedicoController extends Controller
      */
     public function edit(Medico $medico)
     {
-        return view('medicos.edit', ['medico' => $medico]);
+        return view('medicos.edit', ["medico" => $medico, "specialities" => Specialty::all(), "services" => Service::all()]);
     }
 
     /**
@@ -76,7 +99,26 @@ class MedicoController extends Controller
      */
     public function update(Request $request, Medico $medico)
     {
-        //
+
+        $input = $request->all();
+
+        $input['photo_perfil'] = $this->validateAndStoreFile($request);
+
+        $validator = Medico::validateData($input);
+
+        if($validator->fails()){
+            return redirect()->route('medicos.edit', $medico->id)->withErrors($validator->errors());
+        }
+
+        $medico = $this->fillMedico($medico, $input);
+
+        try{
+            $medico->save();
+        }catch(QueryException $e){
+            return redirect()->route('medicos.index')->withErrors(new MessageBag(["erro", $e->getMessage()]));
+        }
+
+        return redirect(route('medicos.index'))->with("message", "O médico ".$medico->id." foi atualizado com sucesso.");
     }
 
     /**
@@ -88,6 +130,46 @@ class MedicoController extends Controller
     public function destroy(Medico $medico)
     {
         Medico::destroy($medico->id);
-        return redirect()->route('medicos.index')->with("message", "Medico ". $medico->name. " Eleminado com sucesso");
+        return redirect()->route('medicos.index')->with("message", "Médico  " .$medico->id. " eliminado com sucesso");
+    }
+
+
+    public function download(Request $request){
+        $downloadService = new DownloadService;
+        return $downloadService->dowloadAsCsv(Medico::all(), "medicos");
+    }
+
+    private function fillMedico(Medico $medico, array $input): Medico
+    {
+        $medico->name = $input['name'];
+        $medico->address = $input['address'];
+        $medico->phone = $input['phone'];
+        $medico->specialty_id = $input['specialty'];
+        $medico->service_id = $input['service'];
+
+        if($input['photo_perfil']){
+            $medico->photo = $input['photo_perfil'];
+        }
+
+        return $medico;
+    }
+
+    private function validateAndStoreFile(Request $request){
+
+        $allowed_extensions = ['jpg', 'png', 'gif', 'jpeg'];
+
+        if($request->hasFile('photo') && $request->file('photo')->isValid()){
+            $file = $request->file('photo');
+            $extension = $file->extension();
+
+            if(in_array($extension, $allowed_extensions)){
+                $fileName = uniqid() .".". $extension;
+                return $file->storeAs('/', $fileName, "public_images");
+            }
+
+            return false;
+        }
+
+        return false;
     }
 }
