@@ -21,7 +21,7 @@
 
     <a class="btn btn-info" href="{{ route('medicos.create') }}" title="{{ __('Novo médico')}}"> {{ __('Novo médico')}} </a>
 
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered mt-3">
         <thead>
             <tr>
                 <td>{{ __('Nome') }}</td>

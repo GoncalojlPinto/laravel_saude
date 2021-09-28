@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SpecialtyController;
@@ -28,8 +29,10 @@ Route::get('/dashboard', function () {
 Route::get('medicos/download', [MedicoController::class, 'download']);
 Route::resource('medicos', MedicoController::class);
 
-
 Route::resource('specialties', SpecialtyController::class);
 Route::resource('services', ServiceController::class);
+Route::resource('medicines', MedicineController::class);
+
+
 
 require __DIR__.'/auth.php';

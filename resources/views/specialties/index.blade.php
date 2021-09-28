@@ -21,7 +21,7 @@
 
     <a class="btn btn-info" href="{{ route('specialties.create') }}" title="{{ __('Nova Especialidade')}}"> {{ __('Nova Especialidade')}} </a>
 
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered mt-3">
         <thead>
             <tr>
                 <td>{{ __('Id') }}</td>
